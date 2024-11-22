@@ -9,10 +9,12 @@
 
 <div class="user-listing">
   <p th:text="${'Name: ' + user.name}"></p>
-  <p> Jobs:
+  <img  th:src="@{'data:image/*;base64,'+${user.userImage.getImageDataBase64()}}" alt="images from database" width="50%" height="50%"/>
   <ul>
     <li th:each="user : ${users}">
       <a th:href="@{'/view/' + ${user.id}}" th:text="${user.name}"></a>
+
+
     </li>
   </ul>
   </p>

@@ -1,8 +1,11 @@
 package com.jeffwork.UserWork.models;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
-import org.apache.tomcat.util.codec.binary.Base64;
+import jakarta.persistence.OneToOne;
+
+import java.util.Base64;
 
 @Entity
 public class Image extends AbstractEntity{
@@ -10,10 +13,14 @@ public class Image extends AbstractEntity{
     @Lob
     private byte[] imageData;
 
+    @OneToOne
+    @JoinColumn(name = "user_image_id")
+    private static User user;
+
+
     public Image(){};
 
     public Image(String name, byte[] imageData) {
-
         super();
         this.setName(name);
         this.imageData = imageData;
@@ -29,7 +36,7 @@ public class Image extends AbstractEntity{
     }
 
     public String getImageDataBase64() {
-        return Base64.encodeBase64String(this.imageData);
+        return Base64.getEncoder().encodeToString(this.imageData);
     }
 
 }

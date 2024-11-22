@@ -5,6 +5,7 @@ import com.jeffwork.UserWork.models.Image;
 import com.jeffwork.UserWork.models.User;
 import com.jeffwork.UserWork.models.data.ImageRepository;
 import com.jeffwork.UserWork.models.data.UserRepository;
+import jakarta.validation.Path;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,21 +15,24 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 @Controller
 @RequestMapping("users")
 public class UserContoller {
 
+
     @Autowired
     private UserRepository userRepository;
+    @Autowired
     private ImageRepository imageRepository;
 
-    @GetMapping("/")
+    @GetMapping("")
     public String index(Model model){
         model.addAttribute("title", "All Users");
         model.addAttribute("users", userRepository.findAll());
@@ -39,21 +43,24 @@ public class UserContoller {
     @GetMapping("add")
     public String displayAddUserForm(Model model) {
         model.addAttribute(new User());
-        model.addAttribute(new Image());
         model.addAttribute("title","Add User");
         return "users/add";
     }
 
-    @PostMapping(value = "add", consumes = {"application/x-www-form-urlencoded", MULTIPART_FORM_DATA_VALUE })
-    public String processAddUserForm(@ModelAttribute @Valid User newUser,@RequestParam MultipartFile file, @RequestParam String fileName, Errors errors, Model model) {
+    @PostMapping(value = "add")
+    public String processAddUserForm(@ModelAttribute @Valid User newUser,@RequestParam("file") MultipartFile file, @RequestParam("fileName") String fileName, Errors errors, Model model) {
 
         if (errors.hasErrors()) {
             model.addAttribute("title", "Add User");
             return "users/add";
         }
+
+
+
+
         Image tempImage = new Image();
-        saveImage(tempImage, fileName, file);
-        imageRepository.save(tempImage);
+        tempImage = saveImage(tempImage, fileName, file);
+        //imageRepository.save(tempImage);
         newUser.setUserImage(tempImage);
         userRepository.save(newUser);
 
@@ -75,15 +82,14 @@ public class UserContoller {
     }
 
 
-    public void saveImage(Image imageEntity, String name, MultipartFile file) {
+    public Image saveImage(Image imageEntity, String name, MultipartFile file) {
         try {
             imageEntity.setName(name);
             imageEntity.setImageData(file.getBytes());
-            imageRepository.save(imageEntity);
         } catch (IOException ex) {
             Logger.getLogger(Image.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        return imageEntity;
     }
 
 }

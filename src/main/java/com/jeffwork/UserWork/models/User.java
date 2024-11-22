@@ -20,7 +20,7 @@ public class User extends AbstractEntity {
 
     private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Image userImage;
 
     public User() {}
