@@ -14,13 +14,13 @@ class App extends Component {
   }
 
   render() {
-    const {clients} = this.state;
+    const {users} = this.state;
     return (
         <div className="App">
           <header className="App-header">
             <div className="App-intro">
               <h2>Users</h2>
-              {users.map(client =>
+              {users.map(user =>
                   <div key={user.id}>
                     {user.name}
                   </div>
